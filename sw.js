@@ -3,11 +3,12 @@
    アプリ本体のファイルを端末に保存して、通信がなくても起動できるようにする係
 
    ・通信できるときは、いつも最新のファイルを取りに行く（そして保存し直す）
+     ブラウザが一時的に覚えている古いファイルは使わず、毎回サーバーに確認する
    ・通信できない／遅いときは、保存しておいたファイルを使う
    ・ファイルを追加・削除したら、下の CACHE_NAME の数字を1つ上げる
 ============================== */
 
-const CACHE_NAME = "ondoku-v2";
+const CACHE_NAME = "ondoku-v3";
 
 // 端末に保存しておくファイルの一覧
 const APP_FILES = [
@@ -73,7 +74,7 @@ async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
 
   try {
-    const response = await withTimeout(fetch(request), NETWORK_TIMEOUT_MS);
+    const response = await withTimeout(fetchFresh(request), NETWORK_TIMEOUT_MS);
     if (response.ok) {
       cache.put(request, response.clone());
     }
@@ -83,6 +84,15 @@ async function networkFirst(request) {
     if (cached) return cached;
     throw error;
   }
+}
+
+// ブラウザの一時保存（HTTPキャッシュ）を使わず、サーバーに最新か確認して取りに行く
+// （更新直後に、新しいファイルと古いファイルが混ざるのを防ぐ）
+function fetchFresh(request) {
+  if (request.mode === "navigate") {
+    return fetch(request.url, { cache: "no-cache", credentials: "same-origin" });
+  }
+  return fetch(new Request(request, { cache: "no-cache" }));
 }
 
 function withTimeout(promise, ms) {
