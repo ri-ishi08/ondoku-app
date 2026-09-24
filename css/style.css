@@ -1,0 +1,876 @@
+/* ==============================
+   色・文字などの基本設定
+   ここを変えると全体の見た目が変わります
+============================== */
+:root {
+  --bg: #EDF2F4;          /* 背景：霧のような薄い青灰色 */
+  --surface: #FFFFFF;     /* 文のカード */
+  --ink: #1D2A36;         /* 文字・プレーヤー背景 */
+  --muted: #5E6E7B;       /* 訳・補足の文字 */
+  --line: #D3DDE3;        /* 区切り線 */
+  --accent: #1F6F8B;      /* 湖のような青（再生ボタンなど） */
+  --accent-soft: #D6E7EE; /* 薄いアクセント */
+  --record: #2E7D4F;      /* 記録の緑 */
+  --idiom: #C2461E;       /* 熟語のオレンジ */
+
+  --font-en: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
+
+  --player-height: 212px; /* 下の固定プレーヤーの高さ（本文が隠れないように使う） */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ja);
+  line-height: 1.6;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ==============================
+   ページ全体
+============================== */
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: calc(20px + env(safe-area-inset-top)) 16px
+           calc(var(--player-height) + 24px + env(safe-area-inset-bottom));
+}
+
+/* ==============================
+   タイトル
+============================== */
+.lesson-head {
+  margin-bottom: 16px;
+}
+
+.lesson-title {
+  margin: 0;
+  font-family: var(--font-en);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.lesson-title-ja {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.lesson-title-ja:empty {
+  display: none;
+}
+
+.record-summary {
+  display: inline-block;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.record-summary.has-record {
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--record);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* hidden属性を確実に効かせる */
+[hidden] {
+  display: none !important;
+}
+
+/* ==============================
+   訳の表示切り替えボタン
+============================== */
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.toggle-ja {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.toggle-ja[aria-pressed="false"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ==============================
+   段落ごとの英文と訳
+============================== */
+.paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paragraph {
+  padding: 18px 18px 20px;
+  background: var(--surface);
+  border-radius: 14px;
+}
+
+.paragraph-en {
+  margin: 0;
+  font-family: var(--font-en);
+  font-size: 1.2rem;
+  line-height: 1.75;
+}
+
+.paragraph-ja {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+/* 熟語のハイライト（英文・訳とも同じ色） */
+.idiom {
+  color: var(--idiom);
+}
+
+.paragraph-en .idiom {
+  font-weight: 700;
+}
+
+.paragraph-ja .idiom {
+  font-weight: 600;
+}
+
+/* 段落の枠をタップできるボタンにする */
+.paragraph.has-ja {
+  cursor: pointer;
+  touch-action: manipulation;          /* ダブルタップでの拡大を防ぐ */
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s;
+}
+
+.paragraph.has-ja:active {
+  background: var(--accent-soft);      /* 押した瞬間だけ色が変わる */
+}
+
+/* 訳が隠れている段落 */
+.paragraph.is-ja-hidden .paragraph-ja {
+  display: none;
+}
+
+/* 英文の右下の「+」ボタン */
+.paragraph-en {
+  display: flow-root; /* 右に寄せたボタンが段落からはみ出さないようにする */
+}
+
+.paragraph-toggle {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin: 5px 0 0 10px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  vertical-align: middle;
+}
+
+/* 「+」の形をCSSで描く（開くと45度回って「×」になる） */
+.paragraph-toggle-icon {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  transition: transform 0.2s;
+}
+
+.paragraph-toggle-icon::before,
+.paragraph-toggle-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: currentColor;
+  border-radius: 1px;
+  transform: translate(-50%, -50%);
+}
+
+.paragraph-toggle-icon::before {
+  width: 12px;
+  height: 2px;
+}
+
+.paragraph-toggle-icon::after {
+  width: 2px;
+  height: 12px;
+}
+
+.paragraph-toggle[aria-expanded="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.paragraph-toggle[aria-expanded="true"] .paragraph-toggle-icon {
+  transform: rotate(45deg);
+}
+
+/* 全部の訳を隠したときは、タイトルの訳も隠す */
+body.hide-ja .lesson-title-ja {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paragraph.has-ja,
+  .paragraph-toggle-icon {
+    transition: none;
+  }
+}
+
+/* エラーメッセージ */
+.message {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #FBEAEA;
+  color: #8A2323;
+  font-size: 0.95rem;
+}
+
+/* ==============================
+   勉強記録ボタン
+============================== */
+.finish {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.record-btn {
+  width: 100%;
+  min-height: 56px;
+  border: none;
+  border-radius: 14px;
+  background: var(--record);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.record-btn:disabled {
+  opacity: 0.5;
+}
+
+.record-status {
+  min-height: 1.6em;
+  margin: 10px 0 0;
+  color: var(--record);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.undo-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+/* 一覧へ戻るリンク */
+.back-nav {
+  margin-bottom: 8px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ==============================
+   熟語一覧
+============================== */
+.idiom-section {
+  margin-top: 20px;
+}
+
+/* 「熟語 16個 ＋」の開閉ボタン */
+.idiom-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  cursor: pointer;
+  list-style: none;                  /* 標準の ▶ マークを消す */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.idiom-summary::-webkit-details-marker {
+  display: none;                     /* Safari用：標準の ▶ マークを消す */
+}
+
+.idiom-summary:active {
+  background: var(--accent-soft);
+}
+
+.idiom-summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.idiom-section[open] .idiom-summary {
+  margin-bottom: 10px;
+}
+
+.idiom-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.idiom-summary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+}
+
+.idiom-section[open] .idiom-summary-btn {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.idiom-section[open] .idiom-summary-btn .paragraph-toggle-icon {
+  transform: rotate(45deg);
+}
+
+.idiom-count {
+  margin-left: 4px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.idiom-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.idiom-card {
+  padding: 14px 16px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.idiom-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.idiom-no {
+  flex: none;
+  min-width: 1.4em;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.idiom-phrase {
+  font-family: var(--font-en);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.idiom-meaning {
+  margin: 4px 0 0;
+  color: var(--idiom);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.idiom-example {
+  margin: 10px 0 0;
+  font-family: var(--font-en);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.idiom-example .idiom {
+  font-weight: 700;
+}
+
+.idiom-example-ja {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.idiom-note {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+/* ==============================
+   タップできる熟語と、意味パネル
+============================== */
+.idiom-link {
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.idiom-link:active {
+  background: #FBE3D9;
+  border-radius: 3px;
+}
+
+.idiom-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 20; /* プレーヤーより手前に出す */
+}
+
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(29, 42, 54, 0.45);
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+
+.sheet-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 640px;
+  max-height: 75vh;
+  margin: 0 auto;
+  padding: 20px 20px calc(28px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  background: var(--surface);
+  transform: translateY(100%);
+  transition: transform 0.22s ease-out;
+}
+
+.sheet.is-open .sheet-backdrop {
+  opacity: 1;
+}
+
+.sheet.is-open .sheet-panel {
+  transform: translateY(0);
+}
+
+.sheet-close {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: -6px -6px 0 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.sheet-close .paragraph-toggle-icon {
+  transform: rotate(45deg); /* 「+」を回して「×」にする */
+}
+
+/* パネルの中は、一覧のカードより少し大きめの文字にする */
+.sheet-body .idiom-phrase {
+  font-size: 1.35rem;
+}
+
+.sheet-body .idiom-meaning {
+  font-size: 1.05rem;
+}
+
+.sheet-body .idiom-example {
+  font-size: 1.1rem;
+}
+
+.sheet-body .idiom-example-ja {
+  font-size: 0.95rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-backdrop,
+  .sheet-panel {
+    transition: none;
+  }
+}
+
+/* ==============================
+   画面下の音声プレーヤー
+============================== */
+.player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding: 12px 16px calc(14px + env(safe-area-inset-bottom));
+  background: var(--ink);
+  color: #fff;
+  border-radius: 20px 20px 0 0;
+}
+
+.player > * {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 再生位置バー */
+.seek-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time {
+  min-width: 2.8em;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: #B9C6D0;
+}
+
+.time:last-child {
+  text-align: right;
+}
+
+.seek {
+  flex: 1;
+  height: 32px;
+  margin: 0;
+  accent-color: #7FC3DA;
+}
+
+/* 戻る・再生・進む */
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 6px;
+}
+
+.skip-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 1.5px solid #4A5B6A;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.skip-num {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.skip-label {
+  font-size: 0.7rem;
+  color: #B9C6D0;
+}
+
+.play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+}
+
+.play-btn svg {
+  width: 38px;
+  height: 38px;
+  fill: currentColor;
+}
+
+/* 再生中は一時停止アイコンに切り替え */
+.play-btn .icon-pause {
+  display: none;
+}
+
+.play-btn.is-playing .icon-play {
+  display: none;
+}
+
+.play-btn.is-playing .icon-pause {
+  display: block;
+}
+
+.skip-btn:active,
+.play-btn:active,
+.speed-btn:active,
+.record-btn:active {
+  transform: scale(0.97);
+}
+
+/* 再生速度 */
+.speed-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.speed-btn {
+  min-height: 44px;
+  border: 1.5px solid #4A5B6A;
+  border-radius: 12px;
+  background: transparent;
+  color: #fff;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-btn[aria-pressed="true"] {
+  border-color: #7FC3DA;
+  background: #7FC3DA;
+  color: var(--ink);
+}
+
+/* ボタンのアニメーションが苦手な設定の人向け */
+@media (prefers-reduced-motion: reduce) {
+  .skip-btn:active,
+  .play-btn:active,
+  .speed-btn:active,
+  .record-btn:active {
+    transform: none;
+  }
+}
+
+/* ==============================
+   一覧画面（index.html）
+============================== */
+.page-list {
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+
+.app-title {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* 総カウント・今日のカウント */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #3A4A58;
+}
+
+.stat {
+  padding: 16px 18px;
+  background: var(--ink);
+  color: #fff;
+}
+
+.stat-label {
+  margin: 0;
+  color: #B9C6D0;
+  font-size: 0.8rem;
+}
+
+.stat-value {
+  margin: 2px 0 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-unit {
+  margin-left: 2px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.list-heading {
+  margin: 24px 0 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.lesson-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lesson-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lesson-link:active {
+  background: var(--accent-soft);
+}
+
+.lesson-link:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.lesson-no {
+  flex: none;
+  width: 1.6em;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.lesson-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.lesson-name {
+  margin: 0;
+  font-family: var(--font-en);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.lesson-name-ja {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.lesson-count {
+  flex: none;
+  text-align: right;
+}
+
+.lesson-count-num {
+  margin: 0;
+  color: var(--record);
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lesson-count-num.is-zero {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.lesson-count-date {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.lesson-error {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FBEAEA;
+  color: #8A2323;
+  font-size: 0.85rem;
+}
+
+.list-note {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}

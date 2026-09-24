@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1D2A36">
+  <title>英語音読</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <main class="page">
+
+    <!-- 一覧へ戻る -->
+    <nav class="back-nav">
+      <a href="index.html" class="back-link">‹ 一覧へ</a>
+    </nav>
+
+    <!-- Lessonのタイトルと記録 -->
+    <header class="lesson-head">
+      <h1 id="lesson-title" class="lesson-title">読み込み中…</h1>
+      <p id="lesson-title-ja" class="lesson-title-ja"></p>
+      <p id="record-summary" class="record-summary">まだ記録はありません</p>
+    </header>
+
+    <!-- 日本語訳の表示／非表示 -->
+    <div class="toolbar">
+      <button id="toggle-ja" class="toggle-ja" type="button" aria-pressed="true">訳を隠す</button>
+    </div>
+
+    <!-- 読み込みエラー時のメッセージ -->
+    <p id="message" class="message" hidden></p>
+
+    <!-- 段落ごとの英文と訳（lesson.jsがここに入れる） -->
+    <div id="paragraph-list" class="paragraphs"></div>
+
+    <!-- 勉強記録ボタン -->
+    <div class="finish">
+      <button id="record-btn" class="record-btn" type="button" disabled>記録する（+1）</button>
+      <p id="record-status" class="record-status" aria-live="polite"></p>
+      <button id="undo-btn" class="undo-btn" type="button" hidden>直前の記録を取り消す</button>
+    </div>
+
+    <!-- 熟語一覧（教材に "idioms" があるときだけ表示）
+         最初は閉じていて、タップするとまとめて開く -->
+    <details id="idiom-section" class="idiom-section" hidden>
+      <summary class="idiom-summary">
+        <span class="idiom-heading">熟語 <span id="idiom-count" class="idiom-count"></span></span>
+        <span class="idiom-summary-btn" aria-hidden="true"><span class="paragraph-toggle-icon"></span></span>
+      </summary>
+      <ol id="idiom-list" class="idiom-list"></ol>
+    </details>
+
+  </main>
+
+  <!-- 画面下に固定する音声プレーヤー -->
+  <div class="player" role="region" aria-label="音声プレーヤー">
+    <audio id="audio" preload="metadata"></audio>
+
+    <div class="seek-row">
+      <span id="time-current" class="time">0:00</span>
+      <input id="seek" class="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="再生位置">
+      <span id="time-total" class="time">0:00</span>
+    </div>
+
+    <div class="control-row">
+      <button id="back-btn" class="skip-btn" type="button" aria-label="10秒戻る">
+        <span class="skip-num">10</span><span class="skip-label">戻る</span>
+      </button>
+      <button id="play-btn" class="play-btn" type="button" aria-label="再生">
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+      </button>
+      <button id="forward-btn" class="skip-btn" type="button" aria-label="10秒進む">
+        <span class="skip-num">10</span><span class="skip-label">進む</span>
+      </button>
+    </div>
+
+    <div class="speed-row" role="group" aria-label="再生速度">
+      <button class="speed-btn" type="button" data-speed="0.75" aria-pressed="false">0.75×</button>
+      <button class="speed-btn" type="button" data-speed="1" aria-pressed="true">1.0×</button>
+      <button class="speed-btn" type="button" data-speed="1.25" aria-pressed="false">1.25×</button>
+    </div>
+  </div>
+
+  <!-- 読み込む順番が大事：progress → markup → player → lesson -->
+  <script src="js/progress.js"></script>
+  <script src="js/markup.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/lesson.js"></script>
+</body>
+</html>

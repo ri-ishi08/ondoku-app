@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-01",
+  "no": 1,
+  "title": "A Small Garden on the Balcony",
+  "titleJa": "ベランダの小さな菜園",
+  "words": 123,
+  "audioFile": "sample-01.mp3",
+  "paragraphs": [
+    {
+      "en": "Last spring, I {1:made up my mind} to grow vegetables on my balcony. I had no experience, so I {2:was at a loss} at first. Still, I didn't want to {3:give up on} the idea before trying.",
+      "ja": "昨年の春、私はベランダで野菜を育てようと{決心した}。経験がなかったので、最初は{途方に暮れた}。それでも、試す前にその考えを{あきらめ}たくはなかった。"
+    },
+    {
+      "en": "A neighbor who {4:is familiar with} gardening gave me some advice. She told me to {5:start with} easy plants such as herbs and cherry tomatoes. I {6:wrote} her tips {6:down} in a small notebook.",
+      "ja": "園芸{に詳しい}近所の人が、いくつかアドバイスをくれた。ハーブやミニトマトのような育てやすい植物{から始める}ようにと、彼女は言った。私は彼女の助言を小さなノートに{書き留めた}。"
+    },
+    {
+      "en": "Every morning, I {7:took care of} the plants before work. {8:Little by little}, the leaves grew larger, and small green tomatoes appeared.",
+      "ja": "毎朝、出勤前に植物の{世話をした}。{少しずつ}葉は大きくなり、小さな緑色のトマトが実った。"
+    },
+    {
+      "en": "By summer, I was able to {9:make use of} fresh tomatoes and basil in my cooking. The garden is small, but it {10:makes a big difference} in my daily life.",
+      "ja": "夏には、新鮮なトマトとバジルを料理{に活用する}ことができた。菜園は小さいが、私の毎日の生活{に大きな違いをもたらしている}。"
+    }
+  ],
+  "idioms": [
+    {
+      "no": 1,
+      "phrase": "make up one's mind",
+      "meaning": "決心する",
+      "example": "She {made up her mind} to study abroad.",
+      "exampleJa": "彼女は留学しようと{決心した}。",
+      "note": "≒ decide to do"
+    },
+    {
+      "no": 2,
+      "phrase": "be at a loss",
+      "meaning": "途方に暮れている；困っている",
+      "example": "I {was at a loss} for words.",
+      "exampleJa": "私は言葉{に詰まった}。",
+      "note": ""
+    },
+    {
+      "no": 3,
+      "phrase": "give up on ～",
+      "meaning": "～をあきらめる",
+      "example": "Don't {give up on} your dream.",
+      "exampleJa": "夢{をあきらめ}ないで。",
+      "note": "≒ abandon ～"
+    },
+    {
+      "no": 4,
+      "phrase": "be familiar with ～",
+      "meaning": "～をよく知っている；～に詳しい",
+      "example": "He {is familiar with} this area.",
+      "exampleJa": "彼はこの辺り{に詳しい}。",
+      "note": "cf. be familiar to ～ ～によく知られている"
+    },
+    {
+      "no": 5,
+      "phrase": "start with ～",
+      "meaning": "～から始める",
+      "example": "Let's {start with} the basics.",
+      "exampleJa": "基本{から始め}よう。",
+      "note": ""
+    },
+    {
+      "no": 6,
+      "phrase": "write down ～",
+      "meaning": "～を書き留める",
+      "example": "Please {write down} your name.",
+      "exampleJa": "名前{を書き留めて}ください。",
+      "note": "≒ note down ～"
+    },
+    {
+      "no": 7,
+      "phrase": "take care of ～",
+      "meaning": "～の世話をする",
+      "example": "She {takes care of} her grandmother.",
+      "exampleJa": "彼女は祖母{の世話をしている}。",
+      "note": "≒ look after ～"
+    },
+    {
+      "no": 8,
+      "phrase": "little by little",
+      "meaning": "少しずつ",
+      "example": "My English is improving {little by little}.",
+      "exampleJa": "私の英語は{少しずつ}上達している。",
+      "note": "≒ gradually"
+    },
+    {
+      "no": 9,
+      "phrase": "make use of ～",
+      "meaning": "～を利用する；～を活用する",
+      "example": "We should {make use of} this chance.",
+      "exampleJa": "この機会{を活用す}べきだ。",
+      "note": "≒ take advantage of ～"
+    },
+    {
+      "no": 10,
+      "phrase": "make a difference",
+      "meaning": "違いを生む；影響を与える",
+      "example": "Your help {makes a big difference}.",
+      "exampleJa": "あなたの助けは{大きな違いを生む}。",
+      "note": ""
+    }
+  ]
+}
