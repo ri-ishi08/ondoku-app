@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1D2A36">
+  <title>教材の管理｜英語音読</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- ホーム画面に追加したときの設定（PWA） -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="英語音読">
+</head>
+<body>
+
+  <main class="page page-list">
+
+    <nav class="back-nav">
+      <a href="index.html" class="back-link">‹ 一覧へ</a>
+    </nav>
+
+    <h1 class="manage-title">教材の管理</h1>
+
+    <!-- 取り込み -->
+    <section class="manage-section">
+      <h2 class="list-heading">取り込む</h2>
+      <label class="import-btn" id="import-label">
+        <input id="file-input" class="file-input" type="file" multiple
+               accept=".json,.mp3,.m4a,application/json,audio/*">
+        <span id="import-label-text">ファイルを選ぶ</span>
+      </label>
+      <p class="import-hint">
+        教材のJSONと音声（mp3）を、まとめて選べます。<br>
+        同じLessonをもう一度取り込むと上書きされます（勉強記録は消えません）。
+      </p>
+      <ul id="result-list" class="result-list" aria-live="polite"></ul>
+    </section>
+
+    <!-- 保存済みの教材 -->
+    <section class="manage-section">
+      <h2 class="list-heading">この端末に保存済みの教材</h2>
+      <p id="usage" class="usage"></p>
+      <ul id="saved-list" class="saved-list"></ul>
+      <p id="saved-empty" class="list-note" hidden>まだ教材は保存されていません。</p>
+    </section>
+
+  </main>
+
+  <!-- 読み込む順番が大事：db → manage -->
+  <script src="js/db.js"></script>
+  <script src="js/manage.js"></script>
+
+  <!-- オフラインでも起動できるようにする（公開したサイトでだけ動かす） -->
+  <script>
+    if ("serviceWorker" in navigator &&
+        location.hostname !== "127.0.0.1" &&
+        location.hostname !== "localhost") {
+      navigator.serviceWorker.register("sw.js");
+    }
+  </script>
+</body>
+</html>

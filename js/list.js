@@ -1,9 +1,10 @@
 /* ==============================
    list.js
-   Lesson一覧と、勉強記録（総カウント・今日のカウント）を表示する係
+   Lesson一覧と、各Lessonの勉強記録（回数・最終日）を表示する係
 
-   ・自分の教材：private/lessons.json に書いたファイルを順に読み込む
-   ・サンプル教材：下の SAMPLE_FILES に書いたもの
+   ・教材：端末に取り込んだLesson（IndexedDB）
+   ・PCの教材：PCで確認するときだけ、private/lessons.json に書いたファイルも表示
+   ・サンプル：下の SAMPLE_FILES に書いたもの
 ============================== */
 
 (function () {
@@ -12,15 +13,19 @@
   const PRIVATE_INDEX = PRIVATE_FOLDER + "lessons.json";
   const SAMPLE_FILES = ["sample/sample-01.json"];
 
+  // PCで確認しているとき（Live Server）かどうか
+  const IS_DEV = /^(127\.0\.0\.1|localhost|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)$/.test(location.hostname);
+
   // HTMLの部品を取得
-  const totalEl = document.getElementById("total-count");
-  const todayEl = document.getElementById("today-count");
+  const importedList = document.getElementById("imported-list");
+  const importedEmpty = document.getElementById("imported-empty");
+  const devSection = document.getElementById("dev-section");
   const privateList = document.getElementById("private-list");
   const privateNote = document.getElementById("private-note");
   const sampleList = document.getElementById("sample-list");
 
   // 読み込んだLessonを覚えておく（戻ってきたときの再表示用）
-  let loaded = { private: [], sample: [] };
+  let loaded = { imported: [], private: [], sample: [] };
 
   // ---------- 読み込み ----------
 
@@ -37,18 +42,34 @@
 
   // ファイルの一覧から、各LessonのJSONを読み込む
   // 1つ失敗しても、ほかは表示できるようにする
-  async function loadLessons(files) {
+  async function loadLessonFiles(files) {
     const results = await Promise.all(files.map(async function (file) {
       try {
         const lesson = await fetchJson(file);
-        return { file: file, lesson: lesson };
+        return { href: "lesson.html?file=" + encodeURIComponent(file), lesson: lesson };
       } catch (error) {
         return { file: file, error: error.message };
       }
     }));
+    return sortByNo(results);
+  }
 
-    // 番号（no）の順に並べる。番号がないものは後ろへ
-    return results.sort(function (a, b) {
+  // 端末に取り込んだLessonを読み込む
+  async function loadImported() {
+    try {
+      const items = await DB.listLessons();
+      return items.map(function (item) {
+        return { href: "lesson.html?id=" + encodeURIComponent(item.id), lesson: item };
+      });
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  // 番号（no）の順に並べる。番号がないものは後ろへ
+  function sortByNo(entries) {
+    return entries.sort(function (a, b) {
       const na = a.lesson && a.lesson.no != null ? a.lesson.no : 9999;
       const nb = b.lesson && b.lesson.no != null ? b.lesson.no : 9999;
       return na - nb;
@@ -68,11 +89,11 @@
     }
 
     const lesson = entry.lesson;
-    const record = Progress.getRecord(lesson.id || entry.file);
+    const record = Progress.getRecord(lesson.id);
 
     const a = document.createElement("a");
     a.className = "lesson-link";
-    a.href = "lesson.html?file=" + encodeURIComponent(entry.file);
+    a.href = entry.href;
 
     const no = document.createElement("span");
     no.className = "lesson-no";
@@ -84,7 +105,7 @@
     const name = document.createElement("p");
     name.className = "lesson-name";
     name.lang = "en";
-    name.textContent = lesson.title || entry.file;
+    name.textContent = lesson.title || lesson.id;
     text.appendChild(name);
     if (lesson.titleJa) {
       const nameJa = document.createElement("p");
@@ -123,15 +144,10 @@
     });
   }
 
-  function renderTotals() {
-    const totals = Progress.getTotals();
-    totalEl.textContent = totals.total;
-    todayEl.textContent = totals.today;
-  }
-
   function renderAll() {
-    renderTotals();
-    renderList(privateList, loaded.private);
+    renderList(importedList, loaded.imported);
+    importedEmpty.hidden = loaded.imported.length > 0;
+    if (IS_DEV) renderList(privateList, loaded.private);
     renderList(sampleList, loaded.sample);
   }
 
@@ -142,34 +158,41 @@
 
   // ---------- はじめに実行 ----------
 
-  async function init() {
-    renderTotals();
-
-    if (location.protocol === "file:") {
-      showPrivateNote("ファイルをダブルクリックで開いています。VS Codeの「Live Server」で開き直してください。");
-      return;
-    }
-
-    // 自分の教材
+  async function loadPrivate() {
     try {
       const files = await fetchJson(PRIVATE_INDEX);
       if (!Array.isArray(files) || files.length === 0) {
         showPrivateNote("private/lessons.json に教材のファイル名が書かれていません。");
-      } else {
-        loaded.private = await loadLessons(files.map(function (name) {
-          return PRIVATE_FOLDER + name;
-        }));
+        return [];
       }
+      return await loadLessonFiles(files.map(function (name) {
+        return PRIVATE_FOLDER + name;
+      }));
     } catch (error) {
       showPrivateNote(
         error.message === "見つかりません"
-          ? "自分の教材を表示するには、private フォルダに lessons.json（教材ファイル名の一覧）を置いてください。"
+          ? "private フォルダに lessons.json（教材ファイル名の一覧）がありません。"
           : "private/lessons.json の書き方に誤りがあります。カンマ（,）や \" を確認してください。"
       );
+      return [];
+    }
+  }
+
+  async function init() {
+    if (location.protocol === "file:") {
+      importedEmpty.hidden = false;
+      importedEmpty.textContent = "ファイルをダブルクリックで開いています。VS Codeの「Live Server」で開き直してください。";
+      return;
     }
 
-    // サンプル教材
-    loaded.sample = await loadLessons(SAMPLE_FILES);
+    loaded.imported = await loadImported();
+
+    if (IS_DEV) {
+      devSection.hidden = false;
+      loaded.private = await loadPrivate();
+    }
+
+    loaded.sample = await loadLessonFiles(SAMPLE_FILES);
 
     renderAll();
   }

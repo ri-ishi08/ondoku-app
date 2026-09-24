@@ -874,3 +874,201 @@ body.hide-ja .lesson-title-ja {
   font-size: 0.85rem;
   line-height: 1.7;
 }
+
+/* ==============================
+   一覧画面：教材がまだないとき・管理へのリンク
+============================== */
+.empty-card {
+  padding: 18px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.empty-text {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.empty-btn,
+.manage-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.empty-btn {
+  background: var(--accent);
+  color: #fff;
+}
+
+.manage-link-wrap {
+  margin: 32px 0 0;
+  text-align: center;
+}
+
+.manage-link {
+  border: 1.5px solid var(--accent);
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.empty-btn:focus-visible,
+.manage-link:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ==============================
+   教材の管理（manage.html）
+============================== */
+.manage-title {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.manage-section {
+  margin-bottom: 28px;
+}
+
+/* ファイル選択の本体は隠して、大きなボタンの見た目にする */
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.import-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.import-btn:active {
+  transform: scale(0.98);
+}
+
+.import-btn:focus-within {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.import-btn.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.import-hint {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.result-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.result-item {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.result-item.is-ok {
+  background: #E3F1E8;
+  color: var(--record);
+}
+
+.result-item.is-warn {
+  background: #FBF1DD;
+  color: #8A5A00;
+}
+
+.result-item.is-error {
+  background: #FBEAEA;
+  color: #8A2323;
+}
+
+.usage {
+  margin: -4px 0 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.saved-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.saved-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.saved-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.saved-name {
+  margin: 0;
+  font-family: var(--font-en);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.saved-meta {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.saved-meta.is-warn {
+  color: #8A5A00;
+}
+
+.delete-btn {
+  flex: none;
+  min-width: 64px;
+  min-height: 44px;
+  border: 1.5px solid #C9A3A3;
+  border-radius: 10px;
+  background: transparent;
+  color: #8A2323;
+  font-size: 0.85rem;
+  font-weight: 600;
+}

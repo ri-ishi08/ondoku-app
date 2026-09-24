@@ -18,31 +18,35 @@
 
     <h1 class="app-title">英語音読</h1>
 
-    <!-- 総カウントと今日のカウント -->
-    <section class="stats" aria-label="勉強記録">
-      <div class="stat">
-        <p class="stat-label">総カウント</p>
-        <p class="stat-value"><span id="total-count">0</span><span class="stat-unit">回</span></p>
-      </div>
-      <div class="stat">
-        <p class="stat-label">今日</p>
-        <p class="stat-value"><span id="today-count">0</span><span class="stat-unit">回</span></p>
-      </div>
-    </section>
-
-    <!-- 自分の教材（private/lessons.json に書いたもの） -->
+    <!-- この端末に取り込んだ教材 -->
     <h2 class="list-heading">教材</h2>
-    <ul id="private-list" class="lesson-list"></ul>
-    <p id="private-note" class="list-note" hidden></p>
+    <ul id="imported-list" class="lesson-list"></ul>
+    <div id="imported-empty" class="empty-card" hidden>
+      <p class="empty-text">まだ教材がありません。JSONと音声ファイルを取り込むと、ここに表示されます。</p>
+      <a href="manage.html" class="empty-btn">教材を取り込む</a>
+    </div>
+
+    <!-- PCで確認するときだけ表示（private/lessons.json に書いたもの） -->
+    <section id="dev-section" hidden>
+      <h2 class="list-heading">PCの教材（private）</h2>
+      <ul id="private-list" class="lesson-list"></ul>
+      <p id="private-note" class="list-note" hidden></p>
+    </section>
 
     <!-- サンプル教材 -->
     <h2 class="list-heading">サンプル</h2>
     <ul id="sample-list" class="lesson-list"></ul>
 
+    <!-- 教材の管理へ -->
+    <p class="manage-link-wrap">
+      <a href="manage.html" class="manage-link">教材の管理（取り込み・削除）</a>
+    </p>
+
   </main>
 
-  <!-- 読み込む順番が大事：progress → list -->
+  <!-- 読み込む順番が大事：progress → db → list -->
   <script src="js/progress.js"></script>
+  <script src="js/db.js"></script>
   <script src="js/list.js"></script>
 
   <!-- オフラインでも起動できるようにする（公開したサイトでだけ動かす） -->

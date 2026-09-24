@@ -8,16 +8,18 @@
 
   // どの教材を開くか
   //   lesson.html                                → サンプル教材
-  //   lesson.html?file=private/lesson-01.json    → 個人データの教材
-  // 音声ファイルは、JSONと同じフォルダから探す
+  //   lesson.html?id=lesson-01                   → 端末に取り込んだ教材
+  //   lesson.html?file=private/lesson-01.json    → PCの private フォルダの教材（確認用）
+  // ファイルから開くとき、音声ファイルはJSONと同じフォルダから探す
   const DEFAULT_FILE = "sample/sample-01.json";
   const params = new URLSearchParams(location.search);
+  const importedId = params.get("id");
   const lessonFile = params.get("file") || DEFAULT_FILE;
   const lessonFolder = lessonFile.includes("/")
     ? lessonFile.slice(0, lessonFile.lastIndexOf("/") + 1)
     : "";
 
-  let lessonId = lessonFile; // JSONを読んだら、中の "id" に置き換える
+  let lessonId = importedId || lessonFile; // JSONを読んだら、中の "id" に置き換える
 
   // HTMLの部品を取得
   const titleEl = document.getElementById("lesson-title");
@@ -302,8 +304,22 @@
 
   // ---------- 教材の読み込み ----------
 
-  // JSONを読み込む。失敗の理由ごとに分かりやすいメッセージを出す
-  async function loadLesson() {
+  // 端末に取り込んだ教材を読み込む（本文と音声）
+  async function loadImportedLesson() {
+    const lesson = await DB.getLesson(importedId);
+    if (!lesson) {
+      throw new Error("この教材は端末に保存されていません。「教材の管理」から取り込んでください。");
+    }
+    const blob = await DB.getAudioBlob(importedId);
+    return {
+      lesson: lesson,
+      audioSrc: blob ? URL.createObjectURL(blob) : null
+    };
+  }
+
+  // ファイル（サンプル・PCの private）から教材を読み込む
+  // 失敗の理由ごとに分かりやすいメッセージを出す
+  async function loadFileLesson() {
     if (location.protocol === "file:") {
       throw new Error("ファイルをダブルクリックで開いています。VS Codeの「Live Server」で開き直してください。");
     }
@@ -312,7 +328,7 @@
     try {
       response = await fetch(lessonFile);
     } catch (error) {
-      throw new Error("「" + lessonFile + "」を読み込めませんでした。Live Serverが起動しているか確認してください。");
+      throw new Error("「" + lessonFile + "」を読み込めませんでした。通信状態を確認してください。");
     }
 
     if (!response.ok) {
@@ -320,8 +336,9 @@
     }
 
     const text = await response.text();
+    let lesson;
     try {
-      return JSON.parse(text);
+      lesson = JSON.parse(text);
     } catch (error) {
       throw new Error(
         "「" + lessonFile + "」のJSONの書き方に誤りがあります。" +
@@ -329,13 +346,18 @@
         "（詳細：" + error.message + "）"
       );
     }
+    return {
+      lesson: lesson,
+      audioSrc: lesson.audioFile ? lessonFolder + lesson.audioFile : null
+    };
   }
 
   async function init() {
     const settings = Progress.getSettings();
 
     try {
-      const lesson = await loadLesson();
+      const loaded = importedId ? await loadImportedLesson() : await loadFileLesson();
+      const lesson = loaded.lesson;
 
       lessonId = lesson.id || lessonFile;
       document.title = lesson.title + "｜英語音読";
@@ -348,13 +370,17 @@
       renderIdioms(lesson.idioms);
       linkIdioms();
 
-      Player.load({
-        src: lessonFolder + lesson.audioFile,
-        speed: settings.speed,
-        onSpeedChange: function (speed) {
-          Progress.saveSettings({ speed: speed });
-        }
-      });
+      if (loaded.audioSrc) {
+        Player.load({
+          src: loaded.audioSrc,
+          speed: settings.speed,
+          onSpeedChange: function (speed) {
+            Progress.saveSettings({ speed: speed });
+          }
+        });
+      } else {
+        showMessage("この教材の音声はまだ保存されていません。「教材の管理」から音声ファイルを取り込んでください。");
+      }
 
       updateRecordSummary(Progress.getRecord(lessonId));
       recordBtn.disabled = false;

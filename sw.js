@@ -7,13 +7,14 @@
    ・ファイルを追加・削除したら、下の CACHE_NAME の数字を1つ上げる
 ============================== */
 
-const CACHE_NAME = "ondoku-v1";
+const CACHE_NAME = "ondoku-v2";
 
 // 端末に保存しておくファイルの一覧
 const APP_FILES = [
   "./",
   "./index.html",
   "./lesson.html",
+  "./manage.html",
   "./manifest.json",
   "./css/style.css",
   "./js/progress.js",
@@ -21,6 +22,8 @@ const APP_FILES = [
   "./js/player.js",
   "./js/lesson.js",
   "./js/list.js",
+  "./js/db.js",
+  "./js/manage.js",
   "./sample/sample-01.json",
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",
